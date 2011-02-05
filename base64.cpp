@@ -33,8 +33,9 @@ namespace
 
         if (ch == '+') return 62;
         if (ch == '/') return 63;
+        if (ch == '=') return 0;
 
-        return 0;
+        return 255;
     }
 
     size_t base64_length(size_t data_len) {
@@ -71,8 +72,8 @@ namespace base64
         size_t output_wpos = 0;
 
         size_t unprocessed = data_len;
-        while (unprocessed > 0)
-        {
+        while (unprocessed > 0) {
+
             size_t pos = data_len - unprocessed;
 
             output[output_wpos+0] = kPrintableChars[(bytes[pos] & 0xFC) >> 2];
@@ -94,13 +95,13 @@ namespace base64
 
     size_t decode(const char* encoded, size_t encoded_len, void* output, size_t output_len)
     {
-        if (encoded == 0 || encoded_len == 0) 
+        if (encoded == 0 || encoded_len == 0)
             return 0;
-        
+
         if (encoded_len == -1)
             encoded_len = strlen(encoded);
 
-        if ((encoded_len & 3) != 0 || encoded_len > kMaxCodeLen) 
+        if ((encoded_len & 3) != 0 || encoded_len > kMaxCodeLen)
             return 0;
 
         if (output == 0)
@@ -109,23 +110,29 @@ namespace base64
         if (output_len < data_length(encoded_len))
             return 0;
 
+        unsigned char* output_bytes = static_cast<unsigned char*>(output);
+
         size_t output_wpos = 0;
         unsigned char data[4];
 
         size_t unprocessed = encoded_len;
-        while (unprocessed > 0)
-        {
+        while (unprocessed > 0) {
+
             size_t pos = encoded_len - unprocessed;
 
             *reinterpret_cast<int*>(data) = 0;
-            for (int i = 0; i < 4; ++i)
+            for (int i = 0; i < 4; ++i) {
+
                 data[i] = decode_char(encoded[pos+i]);
+                if (data[i] == 255) {
 
-            unsigned char* w = static_cast<unsigned char*>(output);
+                    return 0;
+                }
+            }
 
-            w[output_wpos+0] = (data[0] << 2) + (data[1] >> 4);
-            w[output_wpos+1] = (data[1] << 4) + (data[2] >> 2);
-            w[output_wpos+2] = (data[2] << 6) + data[3];
+            output_bytes[output_wpos+0] = (data[0] << 2) + (data[1] >> 4);
+            output_bytes[output_wpos+1] = (data[1] << 4) + (data[2] >> 2);
+            output_bytes[output_wpos+2] = (data[2] << 6) + data[3];
             output_wpos += 3;
 
             unprocessed -= 4;
