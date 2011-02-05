@@ -1,8 +1,9 @@
-an implementation of the base 64 encode & decode
+an implementation of encode & decode for base 64 & base 58 in c++
 
 License:
  Public domain
 
 Changes:
- 2011-02-06. initial release
+ 2011-02-05. add base 58 implementation
+ 2011-02-05. initial release
  
