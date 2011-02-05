@@ -32,7 +32,7 @@ namespace base64
      *  
      *  @param  encoded     input string that is encoded with base64.
      *  @param  encoded_len num of bytes given string. if this value is -1, the string considered as a null-terminated.
-     *  @param  output      pointer to a output buffer.
+     *  @param  output      pointer to a output buffer. there won't be null-terminate.
      *  @param  output_len  size of output buffer in bytes.
      *  
      *  @return
