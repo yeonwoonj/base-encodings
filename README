@@ -4,6 +4,7 @@ License:
  Public domain
 
 Changes:
+ 2011-04-05. fix a minor bug
  2011-02-05. add base 58 implementation
  2011-02-05. initial release
  
