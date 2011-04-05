@@ -18,8 +18,8 @@
 namespace
 {
     const char* kPrintableChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    const int kMaxDataLen = 3221225472L; // 3G
-    const int kMaxCodeLen = 4294967295L; // 4G - 1
+    const unsigned int kMaxDataLen = 3221225472L; // 3G
+    const unsigned int kMaxCodeLen = 4294967295L; // 4G - 1
 
     unsigned char decode_char(unsigned char ch) {
         if (ch >= 'A' && ch <= 'Z')
@@ -40,18 +40,16 @@ namespace
 
     size_t base64_length(size_t data_len) {
 
-        int num  = data_len * 4 / 3;
-        int rest = data_len * 4 % 3;
+        int num  = data_len / 3;
+        int rest = data_len % 3;
 
-        return rest ? num+1 : num;
+        return (rest ? num+1 : num) * 4;
     }
 
     size_t data_length(size_t base64_len) {
 
-        int num  = base64_len * 3 / 4;
-        int rest = base64_len * 3 % 4;
-
-        return rest ? num+1 : num;
+        int num  = base64_len / 4;
+        return num * 3;
     }
 }
 
@@ -65,7 +63,7 @@ namespace base64
         if (output == 0)
             return 0;
 
-        if (output_len < base64_length(data_len))
+        if (output_len < base64_length(data_len) + 1)
             return 0;
 
         const unsigned char* bytes = static_cast<const unsigned char*>(data);
